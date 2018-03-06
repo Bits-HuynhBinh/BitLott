@@ -1,6 +1,7 @@
-contract Lottery {
+contract BitLottery {
 
 	enum State {
+		New,
         AcceptBuyTicket,
         EndBuyTicket,
         KillContract
@@ -12,8 +13,12 @@ contract Lottery {
 	 address public _co_owner3;
 	 
 	 uint public creationTime = now;
+	 
+	 mapping (address => uint) pendingWithdrawals;
+	 mapping (address => uint) pendingWithdrawals;
+		
  
- 
+	State public contractState = State.New;
  
     // Modifier
     modifier onlyCLevel(){
@@ -30,8 +35,24 @@ contract Lottery {
         require(now >= _time);
         _;
     }
+	
+	modifier onlyAcceptBuyTicket()
+	{
+	}
+	
+	modifier onlyEndBuyTicket()
+	{
+	}
+	
+	modifier onlyEndBuyTicket()
+	{
+	}
+	
+	modifier onlyWhenContractIsNotKill()
+	{
+		
+	}
 	// End Modifier
- 
  
  
  
@@ -105,5 +126,39 @@ contract Lottery {
         pendingWithdrawals[msg.sender] = 0;
         msg.sender.transfer(amount);
     }
-    
+	
+	// Order of the modifiers matters here!
+    function buyTicket(string lottery_number) public payable timedTransitions onlyAcceptBuyTicket
+    {
+        
+    }
+	
+	
+	function startStateAcceptBuyTicket()
+	{
+		contractState = State.AcceptBuyTicket;
+	}
+	
+	function startStateEndBuyTicket()
+	{
+		contractState = State.EndBuyTicket;
+	}
+	
+	function killContract()
+	{
+		contractState = State.KillContract;
+		close();
+	}
+	
+	function close() public onlyOwner {
+        selfdestruct(owner);
+    }
+	
+	// fallback function
+	// the amount will be added to support developers
+	// or return back to player
+	function () payable {  
+		// add eth to contract balance
+	}
+	 
 }
